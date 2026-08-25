@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manuel de Kofr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#FBFAF7;
+    --raised:#FFFFFF;
+    --ink:#14171A;
+    --muted:#5B6165;
+    --faint:#8C9296;
+    --rule:#E3DFD6;
+    --vault:#14453D;
+    --vault-soft:#EDF1EF;
+    --brass:#8A6B27;
+    --brass-soft:#F7F1E2;
+    --alarm:#9B3E34;
+    --alarm-soft:#FAEDEB;
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --body:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#101312;
+      --raised:#171B1A;
+      --ink:#E9E7E1;
+      --muted:#A6ADAB;
+      --faint:#767D7C;
+      --rule:#282E2C;
+      --vault:#7FBFAF;
+      --vault-soft:#16211E;
+      --brass:#D3AE6A;
+      --brass-soft:#221D12;
+      --alarm:#D98A80;
+      --alarm-soft:#241514;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#101312;
+    --raised:#171B1A;
+    --ink:#E9E7E1;
+    --muted:#A6ADAB;
+    --faint:#767D7C;
+    --rule:#282E2C;
+    --vault:#7FBFAF;
+    --vault-soft:#16211E;
+    --brass:#D3AE6A;
+    --brass-soft:#221D12;
+    --alarm:#D98A80;
+    --alarm-soft:#241514;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:16.5px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:44rem; margin:0 auto; padding:4rem 1.5rem 7rem;}
+
+  /* --- en-tête --- */
+  .marque{
+    display:flex; align-items:baseline; gap:.7rem;
+    font-family:var(--mono); font-size:.72rem; font-weight:600;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--vault);
+    margin-bottom:2.4rem;
+  }
+  .marque span{color:var(--faint); letter-spacing:.14em;}
+
+  h1{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(2.4rem,7vw,3.4rem); line-height:1.06;
+    letter-spacing:-.02em; text-wrap:balance;
+    margin:0 0 1rem;
+  }
+  .chapo{
+    font-size:1.16rem; line-height:1.6; color:var(--muted);
+    margin:0 0 2.6rem; max-width:34rem;
+  }
+
+  /* --- sommaire --- */
+  nav.sommaire{
+    border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+    padding:1.4rem 0; margin:0 0 3.5rem;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(11rem,1fr)); gap:.55rem 1.6rem;
+  }
+  nav.sommaire a{
+    color:var(--muted); text-decoration:none; font-size:.94rem;
+    display:flex; gap:.6rem; align-items:baseline;
+  }
+  nav.sommaire a:hover{color:var(--vault);}
+  nav.sommaire a:focus-visible{outline:2px solid var(--vault); outline-offset:3px; border-radius:2px;}
+  nav.sommaire b{
+    font-family:var(--mono); font-size:.72rem; font-weight:600;
+    color:var(--faint); font-variant-numeric:tabular-nums;
+  }
+
+  /* --- sections --- */
+  section{margin:0 0 4rem;}
+  .eyebrow{
+    font-family:var(--mono); font-size:.7rem; font-weight:600;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--faint);
+    margin:0 0 .5rem;
+  }
+  h2{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(1.6rem,4vw,2rem); line-height:1.15; letter-spacing:-.015em;
+    text-wrap:balance; margin:0 0 1.2rem;
+  }
+  h3{
+    font-family:var(--body); font-weight:600; font-size:1.05rem;
+    margin:2.2rem 0 .5rem; letter-spacing:-.005em;
+  }
+  p{margin:0 0 1rem; color:var(--muted);}
+  p strong, li strong, dd strong{color:var(--ink); font-weight:600;}
+  a{color:var(--vault);}
+
+  ul,ol{margin:0 0 1rem; padding-left:1.25rem; color:var(--muted);}
+  li{margin-bottom:.45rem;}
+  li::marker{color:var(--faint);}
+
+  /* --- séquences numérotées --- */
+  .etapes{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.5rem;}
+  .etapes > li{
+    display:grid; grid-template-columns:2rem 1fr; gap:1.1rem;
+    margin:0; align-items:start;
+  }
+  .etapes .num{
+    font-family:var(--mono); font-size:.78rem; font-weight:600;
+    color:var(--vault); background:var(--vault-soft);
+    border-radius:999px; width:2rem; height:2rem;
+    display:flex; align-items:center; justify-content:center;
+    font-variant-numeric:tabular-nums; margin-top:.1rem;
+  }
+  .etapes h3{margin:.15rem 0 .35rem;}
+  .etapes p:last-child{margin-bottom:0;}
+
+  /* --- gestes (non séquentiels) --- */
+  .gestes{display:flex; flex-direction:column; gap:1.1rem; margin:0 0 1rem;}
+  .geste{
+    background:var(--raised); border:1px solid var(--rule);
+    border-radius:6px; padding:1.2rem 1.35rem;
+  }
+  .geste h3{margin:0 0 .4rem;}
+  .geste .quand{
+    font-family:var(--mono); font-size:.7rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--brass);
+    margin:0 0 .55rem;
+  }
+  .geste p:last-child{margin-bottom:0;}
+
+  /* --- encadrés --- */
+  .note, .alerte{
+    border-left:3px solid var(--vault); background:var(--vault-soft);
+    border-radius:0 4px 4px 0; padding:1rem 1.2rem; margin:1.5rem 0;
+  }
+  .alerte{border-left-color:var(--alarm); background:var(--alarm-soft);}
+  .note p:last-child, .alerte p:last-child{margin-bottom:0;}
+  .note .titre, .alerte .titre{
+    font-family:var(--mono); font-size:.7rem; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--vault);
+    display:block; margin-bottom:.45rem;
+  }
+  .alerte .titre{color:var(--alarm);}
+
+  /* --- réglages --- */
+  dl{margin:0; display:flex; flex-direction:column; gap:1.3rem;}
+  dt{font-weight:600; color:var(--ink); font-size:1rem;}
+  dd{margin:.25rem 0 0; color:var(--muted);}
+
+  /* --- dépannage --- */
+  .tableau{overflow-x:auto; margin:0 0 1rem;}
+  table{border-collapse:collapse; width:100%; min-width:33rem; font-size:.95rem;}
+  th,td{text-align:left; padding:.8rem 1rem .8rem 0; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--muted);}
+  th{
+    color:var(--ink); font-family:var(--mono); font-size:.68rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; white-space:nowrap;
+    border-bottom-color:var(--ink);
+  }
+  td:first-child{color:var(--ink); font-weight:500; padding-right:1.4rem;}
+
+  /* --- éléments d'interface cités --- */
+  kbd, .ui{
+    font-family:var(--mono); font-size:.85em; font-weight:600;
+    background:var(--raised); border:1px solid var(--rule);
+    border-radius:3px; padding:.1em .4em; color:var(--ink);
+    white-space:nowrap;
+  }
+  .adr{font-family:var(--mono); font-size:.88em; color:var(--vault); word-break:break-all;}
+
+  hr{border:0; border-top:1px solid var(--rule); margin:3.5rem 0;}
+
+  footer{
+    border-top:1px solid var(--rule); padding-top:1.6rem; margin-top:4rem;
+    font-size:.88rem; color:var(--faint);
+  }
+  footer a{color:var(--faint);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="marque">Kofr <span>Manuel · version 0.13</span></div>
+
+  <h1>Votre mémoire, chez vous</h1>
+  <p class="chapo">
+    Kofr est un coffre-fort personnel pour tout ce que les IA savent de vous.
+    Vous le remplissez, vous le fermez avec une phrase que vous seul connaissez,
+    et vous choisissez ce que chaque conversation a le droit de savoir.
+  </p>
+
+  <nav class="sommaire" aria-label="Sommaire">
+    <a href="#comprendre"><b>01</b> Comprendre</a>
+    <a href="#installer"><b>02</b> Installer</a>
+    <a href="#coffre"><b>03</b> Créer son coffre</a>
+    <a href="#memoire"><b>04</b> Couper la mémoire</a>
+    <a href="#remplir"><b>05</b> Remplir</a>
+    <a href="#projets"><b>06</b> Les projets</a>
+    <a href="#quotidien"><b>07</b> Au quotidien</a>
+    <a href="#reglages"><b>08</b> Réglages</a>
+    <a href="#copie"><b>09</b> Copie et restauration</a>
+    <a href="#limites"><b>10</b> Ce que Kofr ne fait pas</a>
+    <a href="#depannage"><b>11</b> Si ça coince</a>
+  </nav>
+
+  <!-- 01 -->
+  <section id="comprendre">
+    <p class="eyebrow">01</p>
+    <h2>Comprendre en une minute</h2>
+
+    <p>
+      Les IA prennent des notes sur vous. ChatGPT retient ce que vous lui dites et
+      le garde chez lui : vous ne pouvez ni le lire vraiment, ni le corriger, ni
+      l'emporter ailleurs. Et comme vous ignorez ce qui est retenu, vous finissez
+      par vous censurer.
+    </p>
+    <p>
+      Kofr inverse la situation. La mémoire vit chez vous, chiffrée. L'IA, elle,
+      reste amnésique — et à chaque conversation, c'est vous qui lui donnez le
+      contexte dont elle a besoin, et rien d'autre.
+    </p>
+
+    <div class="note">
+      <span class="titre">Le principe</span>
+      <p>
+        Tout est chiffré <strong>sur votre ordinateur</strong> avant d'en sortir,
+        avec une clé fabriquée à partir de votre phrase secrète. Sur le serveur,
+        une note ressemble à <span class="adr">K7dQ2p9x.T4mZ8vLb1nR6y…</span>
+      </p>
+      <p>
+        Personne ne peut la lire. Pas l'hébergeur, pas un pirate, pas l'auteur du
+        logiciel. Ce n'est pas une promesse commerciale : c'est une impossibilité
+        technique.
+      </p>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 02 -->
+  <section id="installer">
+    <p class="eyebrow">02</p>
+    <h2>Installer</h2>
+
+    <p>
+      Kofr n'est pas encore sur les boutiques d'extensions. L'installation se fait
+      donc à la main : trois minutes, et réversible à tout moment.
+    </p>
+
+    <ol class="etapes">
+      <li>
+        <span class="num">1</span>
+        <div>
+          <h3>Décompressez le dossier</h3>
+          <p>
+            Sur Windows, clic droit sur <span class="ui">Kofr-testeurs.zip</span> →
+            <span class="ui">Extraire tout</span>. Sur Mac, double-clic. Vous
+            obtenez un dossier <span class="ui">kofr</span>.
+          </p>
+          <p>
+            Rangez-le quelque part de stable — pas dans les téléchargements.
+            <strong>Ne le déplacez plus après l'installation</strong> : le
+            navigateur pointera dessus en permanence.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div>
+          <h3>Ouvrez la page des extensions</h3>
+          <p>
+            Dans un nouvel onglet, tapez <span class="adr">chrome://extensions</span>
+            — ou <span class="adr">edge://extensions</span> si vous êtes sur Edge.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div>
+          <h3>Activez le mode développeur</h3>
+          <p>
+            L'interrupteur est en haut à droite sur Chrome, en bas à gauche sur
+            Edge. Il autorise l'installation d'extensions qui ne viennent pas de
+            la boutique.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <div>
+          <h3>Chargez le dossier</h3>
+          <p>
+            Cliquez <span class="ui">Charger l'extension non empaquetée</span>
+            (Chrome) ou <span class="ui">Charger l'élément décompressé</span>
+            (Edge), puis sélectionnez le dossier <span class="ui">kofr</span>.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <div>
+          <h3>Épinglez l'icône</h3>
+          <p>
+            Cliquez la pièce de puzzle dans la barre du navigateur, trouvez Kofr,
+            et cliquez la punaise. L'icône verte reste désormais visible.
+          </p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alerte">
+      <span class="titre">Navigateurs</span>
+      <p>
+        Kofr fonctionne sur <strong>Chrome et Edge</strong>. Firefox et Safari ne
+        sont pas pris en charge.
+      </p>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 03 -->
+  <section id="coffre">
+    <p class="eyebrow">03</p>
+    <h2>Créer son coffre</h2>
+
+    <p>Au premier lancement, Kofr demande deux choses.</p>
+
+    <ol class="etapes">
+      <li>
+        <span class="num">1</span>
+        <div>
+          <h3>Un identifiant</h3>
+          <p>
+            Votre e-mail ou un pseudo. <strong>Il n'est pas secret</strong> : il
+            indique seulement quel coffre ouvrir, comme une adresse. Il ne permet
+            pas d'entrer.
+          </p>
+          <p>
+            En revanche il est <strong>définitif</strong> : tout le chiffrement en
+            dépend, il ne pourra pas être changé. Vérifiez l'orthographe.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div>
+          <h3>Une phrase secrète</h3>
+          <p>
+            C'est elle qui ouvre le coffre. Préférez une phrase entière à un mot
+            de passe court : <em>le vieux chalet rouge au bout du chemin</em> est
+            à la fois plus solide et plus facile à retenir que <em>Xk9!p2</em>.
+          </p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alerte">
+      <span class="titre">À lire avant de continuer</span>
+      <p>
+        Votre phrase ne quitte jamais votre ordinateur et n'est stockée nulle part.
+        C'est exactement ce qui garantit que personne ne peut vous lire.
+      </p>
+      <p>
+        <strong>La contrepartie : si vous l'oubliez, tout est perdu, définitivement.</strong>
+        Il n'existe aucun bouton « mot de passe oublié », et il n'en existera
+        jamais — le jour où quelqu'un pourrait restaurer votre accès, il pourrait
+        aussi vous lire.
+      </p>
+      <p>Notez-la quelque part de sûr avant d'aller plus loin.</p>
+    </div>
+
+    <h3>Rester déverrouillé</h3>
+    <p>
+      Une fois ouvert, le coffre reste déverrouillé tant que le navigateur est
+      ouvert. La clé vit en mémoire, jamais sur le disque, et disparaît à la
+      fermeture — ou quand vous cliquez <span class="ui">Verrouiller</span>.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- 04 -->
+  <section id="memoire">
+    <p class="eyebrow">04</p>
+    <h2>Couper la mémoire de votre IA</h2>
+
+    <p>
+      C'est l'étape que la plupart des gens sautent, et sans elle Kofr ne sert
+      qu'à moitié : vous auriez deux mémoires en parallèle, la vôtre et la leur.
+      L'intérêt est justement qu'il n'en reste qu'une.
+    </p>
+
+    <h3>ChatGPT</h3>
+    <p>
+      Ouvrez vos <strong>Paramètres</strong>, section <strong>Personnalisation</strong>,
+      et désactivez la <strong>Mémoire</strong> — à la fois les souvenirs
+      enregistrés et la référence à l'historique des conversations. Profitez-en
+      pour vider les instructions personnalisées.
+    </p>
+
+    <h3>Claude, Gemini, Mistral</h3>
+    <p>
+      Chacun a un réglage équivalent dans ses paramètres, sous un nom proche de
+      <strong>Mémoire</strong> ou <strong>Activité</strong>. Cherchez ce mot :
+      c'est celui-là qu'il faut éteindre.
+    </p>
+
+    <div class="note">
+      <span class="titre">Dans l'ordre</span>
+      <p>
+        <strong>Remplissez d'abord votre coffre, coupez la mémoire ensuite.</strong>
+        L'étape suivante consiste à récupérer ce que l'IA a déjà retenu sur vous —
+        si vous effacez avant, il n'y a plus rien à récupérer.
+      </p>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 05 -->
+  <section id="remplir">
+    <p class="eyebrow">05</p>
+    <h2>Remplir le coffre</h2>
+
+    <p>Trois façons, de la plus rapide à la plus complète.</p>
+
+    <div class="gestes">
+      <div class="geste">
+        <p class="quand">Le plus parlant · à faire en premier</p>
+        <h3>Récupérer ce que ChatGPT sait de vous</h3>
+        <p>
+          <span class="ui">Remplir mon coffre</span> vous donne une question à
+          copier. Posez-la à ChatGPT, collez sa réponse dans Kofr, et vous voyez
+          d'un coup tout ce qu'il a noté sur vous depuis le début.
+        </p>
+        <p>
+          Chaque ligne arrive avec une case à cocher. <strong>Rien n'entre dans le
+          coffre sans votre validation</strong> — c'est la différence de fond avec
+          la mémoire d'une IA, qui décide seule.
+        </p>
+      </div>
+
+      <div class="geste">
+        <p class="quand">Le plus complet · quelques heures d'attente</p>
+        <h3>Déposer l'export de vos données</h3>
+        <p>
+          Dans ChatGPT : <strong>Paramètres → Gestion des données → Exporter</strong>.
+          Vous recevez un lien par e-mail, vous téléchargez le zip, vous l'extrayez,
+          et vous déposez le fichier <span class="ui">conversations.json</span>
+          dans Kofr.
+        </p>
+        <p>
+          Ce fichier contient <strong>toutes vos conversations</strong>, pas
+          seulement ce que l'IA a retenu. Bien plus riche sur vos projets. Il ne
+          quitte jamais votre ordinateur : Kofr le lit sur place.
+        </p>
+      </div>
+
+      <div class="geste">
+        <p class="quand">Au fil de l'eau</p>
+        <h3>Écrire à la main</h3>
+        <p>
+          Entrez dans un projet et écrivez directement : une décision, un chiffre,
+          une prochaine étape. C'est le geste le plus simple, et souvent le plus
+          utile.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 06 -->
+  <section id="projets">
+    <p class="eyebrow">06</p>
+    <h2>Les projets</h2>
+
+    <p>
+      Kofr s'ouvre sur vos projets, pas sur une liste de notes. Chacun affiche son
+      nom, ce qu'il contient, quand vous l'avez touché pour la dernière fois, et
+      la dernière chose que vous y avez rangée.
+    </p>
+    <p>
+      Entrez dedans : vous y voyez <strong>l'histoire complète, du plus ancien au
+      plus récent</strong>, chaque ligne datée. Un projet n'est pas une étiquette,
+      c'est un fil que vous reprenez.
+    </p>
+
+    <h3>Créer, renommer, supprimer</h3>
+    <p>
+      <span class="ui">+ Nouveau projet</span> sur l'écran d'accueil. À l'intérieur
+      d'un projet, tout en bas, un dépliant permet de le renommer ou de le
+      supprimer — la suppression efface aussi tout son contenu, et c'est
+      irréversible.
+    </p>
+    <p>
+      Ce qui n'est rattaché à rien atterrit dans <span class="ui">Sans projet</span>,
+      toujours en bas de la liste.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- 07 -->
+  <section id="quotidien">
+    <p class="eyebrow">07</p>
+    <h2>Au quotidien</h2>
+
+    <p>
+      Trois gestes, et ils ne s'enchaînent pas : vous prenez celui dont vous avez
+      besoin.
+    </p>
+
+    <div class="gestes">
+      <div class="geste">
+        <p class="quand">Pour reprendre un travail en cours</p>
+        <h3>Reprendre ce projet</h3>
+        <p>
+          En haut de chaque projet. Kofr écrit dans votre conversation
+          <strong>tout l'historique, numéroté et daté</strong>, avec la consigne de
+          vous dire où vous en êtes et quelle est la prochaine étape.
+        </p>
+        <p>
+          C'est ce qui remplace la mémoire de l'IA : elle ne retient rien, c'est
+          vous qui lui rendez le fil. Rien ne reste chez elle.
+        </p>
+      </div>
+
+      <div class="geste">
+        <p class="quand">Pour une conversation ponctuelle</p>
+        <h3>Envoyer à une IA</h3>
+        <p>
+          Vous indiquez de quoi vous allez parler. Kofr cherche
+          <strong>sur votre ordinateur</strong> ce qui s'y rapporte et le remonte
+          en haut, déjà coché. Rien n'est jamais masqué : tout le coffre reste
+          visible en dessous, à vous de cocher ce qui manque.
+        </p>
+        <p>
+          Trois niveaux — <span class="ui">Bref</span>,
+          <span class="ui">Normal</span>, <span class="ui">Complet</span> — et un
+          compteur qui affiche en direct ce que vous vous apprêtez à donner. C'est
+          le compteur qui compte : sans lui, on envoie à l'aveugle.
+        </p>
+      </div>
+
+      <div class="geste">
+        <p class="quand">Après avoir avancé sur quelque chose</p>
+        <h3>Sauver la conversation</h3>
+        <p>
+          Kofr demande à l'IA de résumer ce qui a été établi, lit sa réponse à
+          l'écran, et vous propose de trier ligne par ligne avant de ranger.
+        </p>
+        <p>
+          C'est ce geste qui empêche votre travail de disparaître quand vous fermez
+          l'onglet. Depuis l'intérieur d'un projet, le résumé y atterrit
+          directement.
+        </p>
+      </div>
+    </div>
+
+    <h3>La pastille dans la page</h3>
+    <p>
+      Une pastille verte <span class="ui">K</span> apparaît en bas à droite de
+      votre IA. Surlignez un passage de la réponse : elle se met en évidence.
+      Cliquez-la, le texte est déjà là, vous choisissez le projet, vous rangez —
+      sans jamais quitter la conversation.
+    </p>
+    <p>
+      C'est le remède à l'oubli : on ne range pas parce qu'il faut sortir de la
+      page. Ici, il n'y a plus à sortir.
+    </p>
+
+    <div class="note">
+      <span class="titre">Un point d'architecture</span>
+      <p>
+        Cette pastille vit dans la page de l'IA, mais <strong>la clé de votre
+        coffre n'y descend jamais</strong>. Elle transmet seulement du texte à
+        l'extension, qui chiffre de son côté. Si le site était compromis demain,
+        il n'y aurait rien à voler.
+      </p>
+    </div>
+
+    <h3>Une habitude qui vaut le coup</h3>
+    <p>
+      Ouvrir avec <strong>Reprendre ce projet</strong>, fermer avec
+      <strong>Sauver la conversation</strong>. Entre les deux, l'IA travaille
+      normalement. À la fin, elle ne garde rien — et vous, si.
+    </p>
+  </section>
+
+  <hr>
+
+  <!-- 08 -->
+  <section id="reglages">
+    <p class="eyebrow">08</p>
+    <h2>Réglages</h2>
+
+    <p>Tout se trouve dans <span class="ui">Mon compte</span>, en haut à droite.</p>
+
+    <dl>
+      <dt>Mon IA</dt>
+      <dd>
+        Kofr fonctionne avec <strong>ChatGPT, Claude, Gemini et Mistral</strong>.
+        Si l'une d'elles est déjà ouverte, il lui parle directement. Sinon, il
+        ouvre celle que vous désignez ici.
+      </dd>
+
+      <dt>Masquer mes noms</dt>
+      <dd>
+        Avant chaque envoi, Kofr repère les noms propres et vous propose de les
+        remplacer par des rôles — « Dupont » devient « mon employeur ». Vous
+        validez <strong>une seule fois par nom</strong>, puis c'est appliqué en
+        silence pour toujours.
+        <br><br>
+        L'IA comprend exactement pareil : elle n'a pas besoin des vrais noms pour
+        vous aider. Mais si cette conversation fuitait, elle n'identifierait
+        personne. Votre coffre, lui, garde les vrais noms — il est à vous.
+      </dd>
+
+      <dt>Conversations sans trace</dt>
+      <dd>
+        Kofr peut ouvrir une conversation temporaire : pas d'historique, pas de
+        mémoire, pas d'entraînement.
+        <br><br>
+        <strong>Seul ChatGPT permet de l'ouvrir par son adresse.</strong> Chez
+        Claude, Gemini et Mistral, le mode existe mais s'active dans leur propre
+        interface — Kofr vous le dit au lieu de faire semblant. Quand l'option est
+        active, un bandeau apparaît dans le coffre.
+      </dd>
+
+      <dt>Changer ma phrase secrète</dt>
+      <dd>
+        Tout est déchiffré avec l'ancienne phrase, rechiffré avec la nouvelle, puis
+        remplacé — <strong>sur votre ordinateur</strong>. Le serveur ne voit passer
+        que du chiffré, comme d'habitude. Ne fermez pas la fenêtre pendant
+        l'opération.
+      </dd>
+
+      <dt>Supprimer mon compte</dt>
+      <dd>
+        Efface le coffre, la serrure et tout le contenu, sans recours. Pensez à
+        télécharger une copie avant.
+      </dd>
+    </dl>
+  </section>
+
+  <hr>
+
+  <!-- 09 -->
+  <section id="copie">
+    <p class="eyebrow">09</p>
+    <h2>Copie et restauration</h2>
+
+    <p>
+      Le chiffrement a un prix : personne ne peut vous dépanner. Une copie est donc
+      votre seule assurance, et Kofr vous le rappelle dès que le coffre a de quoi
+      faire mal à perdre.
+    </p>
+
+    <h3>Télécharger une copie</h3>
+    <p>
+      <span class="ui">Mon compte</span> →
+      <span class="ui">Télécharger mon coffre</span>. Le fichier contient vos
+      informations <strong>en clair</strong>, pour les relire ou les emporter
+      ailleurs, <em>et</em> leur version chiffrée accompagnée de tout ce qui permet
+      de la rouvrir avec votre phrase. Il est téléchargé directement, sans passer
+      par aucun serveur.
+    </p>
+
+    <h3>Remettre une copie en place</h3>
+    <p>
+      Même écran, section <span class="ui">Restaurer</span> : déposez le fichier,
+      Kofr vous dit ce qu'il contient, vous confirmez.
+    </p>
+    <ul>
+      <li>Ce qui est déjà dans le coffre est <strong>ignoré</strong>, pas dupliqué.</li>
+      <li>Si l'opération s'interrompt, relancez : elle reprend où elle en était.</li>
+      <li>Les dates d'origine sont conservées, l'historique reste dans l'ordre.</li>
+      <li>
+        La restauration repart de la partie en clair : elle fonctionne donc
+        <strong>même après un changement de phrase</strong>, et même dans un autre
+        compte.
+      </li>
+    </ul>
+
+    <div class="note">
+      <span class="titre">Bon réflexe</span>
+      <p>
+        Une copie par mois, rangée ailleurs que sur l'ordinateur qui sert tous les
+        jours. C'est cinq secondes, et c'est la seule chose qui vous sauve.
+      </p>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 10 -->
+  <section id="limites">
+    <p class="eyebrow">10</p>
+    <h2>Ce que Kofr ne fait pas</h2>
+
+    <p>Autant le dire franchement.</p>
+
+    <ul>
+      <li>
+        <strong>Il ne récupère pas un coffre perdu.</strong> Phrase oubliée,
+        contenu perdu. Sans exception, par construction.
+      </li>
+      <li>
+        <strong>Il n'empêche pas l'IA de voir ce que vous lui envoyez.</strong>
+        Kofr protège l'accumulation, pas le passage. Ce que vous transmettez part
+        chez l'éditeur, sous votre compte et selon ses règles à lui.
+      </li>
+      <li>
+        <strong>Il n'envoie rien à votre place.</strong> Il écrit dans le champ de
+        saisie, vous relisez, vous appuyez sur Entrée. C'est délibéré.
+      </li>
+      <li>
+        <strong>Il ne stocke pas de fichiers.</strong> Ce serait un autre produit.
+      </li>
+      <li>
+        <strong>Il ne comprend pas encore le sens.</strong> La recherche fonctionne
+        par familles de mots — « immobilier » attrape « maison », « loyer »,
+        « notaire ». Elle ne devine pas tout ; c'est pour ça que rien n'est jamais
+        masqué et que tout le coffre reste visible.
+      </li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <!-- 11 -->
+  <section id="depannage">
+    <p class="eyebrow">11</p>
+    <h2>Si ça coince</h2>
+
+    <div class="tableau">
+      <table>
+        <thead>
+          <tr><th>Symptôme</th><th>Cause probable</th><th>Ce qu'il faut faire</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Le texte ne s'écrit pas dans l'IA</td>
+            <td>La page était ouverte avant l'installation ou une mise à jour</td>
+            <td>Rafraîchissez l'onglet (F5) et recommencez. Le texte est toujours copié dans le presse-papier : <kbd>Ctrl</kbd>+<kbd>V</kbd> fonctionne en secours.</td>
+          </tr>
+          <tr>
+            <td>La pastille K n'apparaît pas</td>
+            <td>Même raison</td>
+            <td>Rafraîchissez la page une fois. Elle s'installera seule ensuite.</td>
+          </tr>
+          <tr>
+            <td>« Coffre injoignable »</td>
+            <td>Connexion coupée</td>
+            <td>Vérifiez votre accès à Internet, puis rouvrez Kofr.</td>
+          </tr>
+          <tr>
+            <td>« Note illisible avec cette phrase »</td>
+            <td>La note a été rangée avec une autre phrase secrète</td>
+            <td>C'est le comportement normal du chiffrement. Restaurez depuis une copie faite avant le changement.</td>
+          </tr>
+          <tr>
+            <td>« Trop de tentatives »</td>
+            <td>Protection contre les essais en série</td>
+            <td>Attendez un quart d'heure. C'est une sécurité, pas une panne.</td>
+          </tr>
+          <tr>
+            <td>Le résumé de conversation échoue</td>
+            <td>L'IA a changé son interface, ou la réponse n'était pas terminée</td>
+            <td>Attendez la fin de la génération et réessayez. Si ça persiste, signalez-le : c'est la partie la plus fragile.</td>
+          </tr>
+          <tr>
+            <td>Une bande rouge dans la fenêtre</td>
+            <td>Une erreur interne</td>
+            <td>Recopiez le message et envoyez-le — c'est exactement ce qu'il faut pour corriger.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Kofr — Celyan Dode, entrepreneur individuel · SIREN 103 293 361<br>
+    <a href="https://celyandode-dev.github.io/kofr/">Politique de confidentialité</a>
+    · celyandode@gmail.com
+  </footer>
+
+</div>
+</body>
+</html>
